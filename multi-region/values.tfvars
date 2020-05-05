@@ -1,0 +1,2 @@
+vm_admin_password=
+naming_prefix=
