@@ -74,7 +74,7 @@ In each resource group, there is:
 - 1 NIC, paired to the NSG in the resource group
 - 1 Ubuntu 18.04 VM, password authenticated. 
 
-First of all, open up `values.tfvars` in the multi-region folder. Add in any custom values you want to replace the default values in `variables.tf`. You'll need to fill in vm_admin_password and naming_prefix as these don't have default values. 
+First of all, open up `values.tfvars` in the multi-region folder. Add in any custom values you want to replace the default values in `variables.tf` - remember to enclose the values in quotes e.g. `naming_prefix="mydev"`. You'll need to fill in vm_admin_password and naming_prefix as these don't have default values. 
 
 Then, run the following in order:
 ```bash
@@ -86,6 +86,10 @@ terraform apply --var-file values.tfvars # this spins up the resources
 
 ## Test connectivity between VMs
 
+### VMs have Public IPs (this repo)
+Get the public IP of one of the VMs from the Azure Portal. SSH into the VM with the credentials you specified in values.tfvars. Then run a `ping <other-vm-private-ip>`. If traffic is returned, then you have successfully set up the VMs. 
+
+### VMs have Private IPs only
 To do this, you can create a jumpbox with a public IP as none of the VMs created above have public IPs. You can do this from the Azure Portal or CLI, and ensure that the jumpbox is in the same VNET as the one created from the terraform script. This will also allow you to ssh into and access the VMs with private IP. 
 
 You should be able to ssh into each of the terraform-created VMs and do a `ping <other-vm-private-ip>`. If traffic is returned, then you have successfully set up the VMs.

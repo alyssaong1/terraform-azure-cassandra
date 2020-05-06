@@ -103,6 +103,15 @@ resource "azurerm_virtual_network_peering" "cassandra" {
   allow_gateway_transit = false
 }
 
+resource "azurerm_public_ip" "cassandra" {
+  count               = length(var.location)
+  name                = "${var.naming_prefix}-pip-${count.index}"
+  location            = element(var.location, count.index)
+  resource_group_name = element(azurerm_resource_group.cassandra.*.name,count.index)
+  allocation_method   = "Dynamic"
+  idle_timeout_in_minutes=30
+}
+
 resource "azurerm_network_interface" "cassandra" {
   count               = length(var.location)
   name                = "nic-${count.index}"
@@ -113,6 +122,7 @@ resource "azurerm_network_interface" "cassandra" {
     name                          = "internal"
     subnet_id                     = element(azurerm_subnet.cassandra.*.id, count.index)
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = element(azurerm_public_ip.cassandra.*.id, count.index)
   }
 }
 

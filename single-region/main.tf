@@ -81,9 +81,18 @@ resource "azurerm_virtual_network" "cassandra" {
 resource "azurerm_subnet" "cassandra" {
   count                = length(var.subnet_prefix)
   name                 = "subnet-${count.index}"
-  resource_group_name  = "${azurerm_resource_group.cassandra.name}"
-  virtual_network_name = "${azurerm_virtual_network.cassandra.name}"
-  address_prefix       = "${element(var.subnet_prefix, count.index)}"
+  resource_group_name  = azurerm_resource_group.cassandra.name
+  virtual_network_name = azurerm_virtual_network.cassandra.name
+  address_prefix       = element(var.subnet_prefix, count.index)
+}
+
+resource "azurerm_public_ip" "cassandra" {
+  count               = var.vm_count
+  name                = "${var.naming_prefix}-pip-${count.index}"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.cassandra.name
+  allocation_method   = "Dynamic"
+  idle_timeout_in_minutes=30
 }
 
 resource "azurerm_network_interface" "cassandra" {
@@ -96,6 +105,7 @@ resource "azurerm_network_interface" "cassandra" {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.cassandra[count.index].id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = element(azurerm_public_ip.cassandra.*.id, count.index)
   }
 }
 
