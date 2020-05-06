@@ -86,11 +86,11 @@ terraform apply --var-file values.tfvars # this spins up the resources
 
 ## Test connectivity between VMs
 
-### VMs have Public IPs (this repo)
-Get the public IP of one of the VMs from the Azure Portal. SSH into the VM with the credentials you specified in values.tfvars. Then run a `ping <other-vm-private-ip>`. If traffic is returned, then you have successfully set up the VMs. 
+### VMs have Public IPs 
+The terraform script in this repo is configured to set public IPs for both VMs. Get the public IP of one of the VMs from the Azure Portal. SSH into the VM with the credentials you specified in values.tfvars. Then run a `ping <other-vm-private-ip>`. If traffic is returned, then you have successfully set up the VMs. 
 
 ### VMs have Private IPs only
-To do this, you can create a jumpbox with a public IP as none of the VMs created above have public IPs. You can do this from the Azure Portal or CLI, and ensure that the jumpbox is in the same VNET as the one created from the terraform script. This will also allow you to ssh into and access the VMs with private IP. 
+You can create a jumpbox with a public IP if you chose to spin up the VMs without public IPs. You can do this from the Azure Portal or CLI, and ensure that the jumpbox is in the same VNET as the one created from the terraform script. This will also allow you to ssh into and access the VMs with private IP. 
 
 You should be able to ssh into each of the terraform-created VMs and do a `ping <other-vm-private-ip>`. If traffic is returned, then you have successfully set up the VMs.
 
